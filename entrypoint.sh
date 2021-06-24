@@ -2,4 +2,4 @@
 
 cd ${GITHUB_WORKSPACE}
 
-git diff --name-only origin/master | grep -P "(\.pl|\.pm|\.cgi)$" | scripts/bin/pt
+git diff --name-only origin/master | grep -P "(\.pl|\.pm|\.cgi)$" | xargs scripts/bin/pt
