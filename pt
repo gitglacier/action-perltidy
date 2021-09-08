@@ -32,6 +32,7 @@ fi
 ptargs=(
   -bext="${perltidybackupext}" # Specify the backup extension to use
   -nst # No output to standard out
+  -g
 )
 
 echo "[*] Running Perltidy"
