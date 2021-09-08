@@ -30,7 +30,6 @@ fi
 
 # These flags provide the path to our .perltidyrc and also perform overrides
 ptargs=(
-  -pro="${PERLTIDYRC}" # Manually specify the path to our configured .perltidyrc
   -bext="${perltidybackupext}" # Specify the backup extension to use
   -nst # No output to standard out
 )
@@ -49,7 +48,7 @@ for ((i=0; i < $#; i++)) {
     continue;
   fi
   echo "  [+] Running Perltidy against \"$perlfile\"..."
-  perltidy ${ptargs[@]} "$perlfile"
+  perltidy -pro="${PERLTIDYRC}" ${ptargs[@]} "$perlfile"
   perltidyresult=$?
   if [ "$perltidyresult" -ne "0" ]; then
     returnresult="$perltidyresult";

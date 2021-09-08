@@ -2,7 +2,7 @@
 -pbp   # Use Perl Best Practices
 ## !! PBP MUST BE FIRST
 -b     # Backup and modify in place
--bext=".ptbak" # Specify the backup extension to use
+-bext="ptbak" # Specify the backup extension to use
 -w     # Report all warnings as errors to ensure all warnings are shown
 -l=160 # Set line length to 160 columns
 -i=3   # Set indentation to 3 columns
@@ -20,5 +20,6 @@
 -nbbc  # No blanks-before-comments - Do not force a blank line before a full-line comment
 -iscl  # ignore-side-comment-lengths - Do not wrap side comment ( this solves the ; on newline w/ comment issue )
 -nolc  # No outdent-long-comments - Do not remove indent from full line comments longer than line length
--g     # Set the logfile gap to 1 and also enable logging to .LOG
--nnn   # Perform output line numbering
+-nst   # No standard output of file
+#-g     # Set the logfile gap to 1 and also enable logging to .LOG
+#-nnn   # Perform output line numbering
