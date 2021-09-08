@@ -28,5 +28,5 @@ git diff --name-only origin/master | while read inputfile; do
             continue
         fi
     fi
-done | xargs scripts/bin/pt
+done | xargs ${COMPOSITE_ROOT}/pt
 exit $?
