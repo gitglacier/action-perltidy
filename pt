@@ -1,0 +1,84 @@
+#!/bin/bash
+
+cmdargs=("$@")
+perltidybackupext="ptbak"
+returnresult=0
+
+##
+# These are our perltidy configuration parameters
+##
+
+SCRIPTPATH="`realpath $0`"
+SCRIPTDIR="`dirname $SCRIPTPATH`"
+
+##
+# Determine the path to our perltidyrc
+##
+
+# By default use the one in our script directory
+PERLTIDYRC="${SCRIPTDIR}/.perltidyrc";
+
+# If we don't have one, Try in the root of our repo ( if we're in one )
+if [ ! -f "${PERLTIDYRC}" ]; then
+   GITROOT="$(git rev-parse --show-toplevel 2>/dev/null)";
+   PERLTIDYRC="${GITROOT}/.perltidyrc";
+   if [ ! -f "${PERLTIDYRC}" ]; then
+      echo -e "FATAL ERROR: Could not find our .perltidyrc!\nChecked Paths:\n - ${SCRIPTDIR}\n - ${GITROOT}\n\n";
+      exit 1;
+   fi
+fi
+
+# These flags provide the path to our .perltidyrc and also perform overrides
+ptargs=(
+  -pro="${PERLTIDYRC}" # Manually specify the path to our configured .perltidyrc
+  -bext="${perltidybackupext}" # Specify the backup extension to use
+  -nst # No output to standard out
+)
+
+echo "[*] Running Perltidy"
+
+for ((i=0; i < $#; i++)) {
+  returnresult=0
+  perlfile="${cmdargs[$i]}"
+  if [ ! -f $perlfile ]; then
+    echo "  [!] Requested file \"$perlfile\" does not exist, skipping.";
+    continue;
+  fi
+  if [ -L $perlfile ]; then
+    echo "  [!] Requested file \"$perlfile\" is a symlink, skipping.";
+    continue;
+  fi
+  echo "  [+] Running Perltidy against \"$perlfile\"..."
+  perltidy ${ptargs[@]} "$perlfile"
+  perltidyresult=$?
+  if [ "$perltidyresult" -ne "0" ]; then
+    returnresult="$perltidyresult";
+    echo "    [!] Return result $perltidyresult caught, We will signal to Github that this run was not successful."
+  fi
+  perlfilelog="${perlfile}.LOG"
+  perlfilebackup="${perlfile}.${perltidybackupext}"
+  if [ -f "${perlfilebackup}" ]; then
+    echo "    [!] Issue detected during Perltidy run requiring file restore!"
+    if [ -f "${perlfilelog}" ]; then
+      echo "Perltidy Log Output: ";
+      cat "$perlfilelog";
+      rm -fv "$perlfilelog";
+      returnresult="1"
+    else
+      echo "    [!] Perltidy did not report log output but had an error, this is odd. Please manually run Perltidy on this file."
+      returnresult="1"
+    fi
+    echo "      [*] Restoring backup file due to errors"
+    mv -fv "${perlfilebackup}" "${perlfile}"
+  else
+    echo "    [-] Running Perltidy cleanup against \"$perlfile\"..."
+    perl -p -i -e 's/([^\s#]+)\s+#/$1 #/gi' "$perlfile"; # Ensures only a single space between text and a comment
+    echo "    [-] Ensuring \"$perlfile\" ends in a newline";
+    tail -c1 < "$perlfile" | read -r _ || echo >> "$perlfile"; # https://unix.stackexchange.com/questions/31947/how-to-add-a-newline-to-the-end-of-a-file
+  fi
+  # Don't keep running if we had an error, We don't want to commit on top of an error
+  if [ "$returnresult" -ne "0" ]; then
+     echo "    [!] This file run resulted in an error, We will not continue."
+     exit $returnresult
+  fi
+}

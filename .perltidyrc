@@ -1,0 +1,24 @@
+## !! PBP MUST BE FIRST
+-pbp   # Use Perl Best Practices
+## !! PBP MUST BE FIRST
+-b     # Backup and modify in place
+-bext=".ptbak" # Specify the backup extension to use
+-w     # Report all warnings as errors to ensure all warnings are shown
+-l=160 # Set line length to 160 columns
+-i=3   # Set indentation to 3 columns
+-ci=3  # continuation-indentation - How far to indent a wrapped line
+-nt    # "No Tabs" - Do not use tabs
+-vmll  # Variable-maximum-line-length - Support highly nested structures without constant wrapping
+-asc   # Add-semicolons - Add any missing optional semicolon at the end of a line
+-dsm   # Delete-semicolons - Delete extra semicolons which are simply empty statements
+-bbs   # Blanks-before-subs - Ensures a blank line before a sub start
+-msc=1 # minimum-space-to-comment - How many columns to indent comments on the same line as code
+-novalign # No vertical align, This is used to avoid lining up => and other items, Typicall used for debugging only
+-pt=0  # Paren-tightness - See perltidy man page
+-vt=0  # Vertical-tightness - 0 always break a line after opening token
+-vtc=0 # Vertical-tightness-close - 0 always break a line after closing token
+-nbbc  # No blanks-before-comments - Do not force a blank line before a full-line comment
+-iscl  # ignore-side-comment-lengths - Do not wrap side comment ( this solves the ; on newline w/ comment issue )
+-nolc  # No outdent-long-comments - Do not remove indent from full line comments longer than line length
+-g     # Set the logfile gap to 1 and also enable logging to .LOG
+-nnn   # Perform output line numbering
