@@ -29,3 +29,4 @@ git diff --name-only origin/master | while read inputfile; do
         fi
     fi
 done | xargs scripts/bin/pt
+exit $?
