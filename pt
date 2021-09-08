@@ -30,9 +30,8 @@ fi
 
 # These flags provide the path to our .perltidyrc and also perform overrides
 ptargs=(
-  -bext="${perltidybackupext}" # Specify the backup extension to use
+  -bext="/${perltidybackupext}" # Specify the backup extension to use, Must be prefixed with "/" to have automatic removal on success
   -nst # No output to standard out
-  -g
 )
 
 echo "[*] Running Perltidy"
@@ -58,15 +57,12 @@ for ((i=0; i < $#; i++)) {
   perlfilelog="${perlfile}.LOG"
   perlfilebackup="${perlfile}.${perltidybackupext}"
   if [ -f "${perlfilebackup}" ]; then
+    returnresult="1"
     echo "    [!] Issue detected during Perltidy run requiring file restore!"
     if [ -f "${perlfilelog}" ]; then
       echo "Perltidy Log Output: ";
       cat "$perlfilelog";
       rm -fv "$perlfilelog";
-      returnresult="1"
-    else
-      echo "    [!] Perltidy did not report log output but had an error, this is odd. Please manually run Perltidy on this file."
-      returnresult="1"
     fi
     echo "      [*] Restoring backup file due to errors"
     mv -fv "${perlfilebackup}" "${perlfile}"
